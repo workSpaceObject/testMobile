@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="renderer" content="webkit|ie-comp|ie-stand" />
+  <meta http-equiv="x-ua-compatible" content="ie=9"/>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+  <title>考试</title>
+  <link rel="stylesheet" href="index.css" />
+  <script>
+    if(!window.Promise) {
+      document.writeln('<script src="https://as.alipayobjects.com/g/component/es6-promise/3.2.2/es6-promise.min.js"'+'>'+'<'+'/'+'script>');
+    }
+    function hideAddressBar()
+    {
+      if(!window.location.hash)
+      {
+        if(document.height <= window.outerHeight + 10)
+        {
+          document.body.style.height = (window.outerHeight + 50) +'px';
+          setTimeout( function(){ window.scrollTo(0, 1); }, 50 );
+        }
+        else
+        {
+          setTimeout( function(){ window.scrollTo(0, 1); }, 0 );
+        }
+      }
+    }
+
+    window.addEventListener("load", hideAddressBar );
+    window.addEventListener("orientationchange", hideAddressBar );
+  </script>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="index.js"></script>
+
+</body>
+</html>
