@@ -11,7 +11,7 @@ export async function  setLocalData(key,value) {
   return localforage.setItem(key,value);
 }
 export async function  getLocalData(key) {
-
+  console.log(key)
   return localforage.getItem(key);
 }
 export async function  removeLocalData(key) {

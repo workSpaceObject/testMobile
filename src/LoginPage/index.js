@@ -23,6 +23,9 @@ class LoginPage extends Component {
       //   }
       //   this.props.dispatch({type: 'tcTestState/login', payload: data});
       // })
+      if (screenfull.enabled) {
+        screenfull.request();
+      }
         form.validateFields((errs, data)=> {
           if (!!errs) {
             return;
@@ -32,11 +35,13 @@ class LoginPage extends Component {
         });
 
     });
+
   }
   render() {
   const {form,loading }=this.props;
+  const {preLogin}=this.props.tcTestState;
   const {getFieldProps,getFieldError,getFieldValue}=form;
- const formItemLayout = {wrapperCol: {span: 24},};
+  const formItemLayout = {wrapperCol: {span: 24},};
     let errors;
 
     return (
@@ -49,7 +54,7 @@ class LoginPage extends Component {
          </Flex>
        <List style={{margin:'0 auto',marginTop:'1.2rem',width:'86%'}} className={Styles.ListStyle}>
          <InputItem style={{color:'#3593DB',border:'0.02rem solid #66ACE2',fontSize:'1rem',borderRadius:'0.1rem'}}
-           {...getFieldProps('identifier',{rules: [{ required: true, max: 20, message: '请输入身份证号',whitespace:true },],})}
+           {...getFieldProps('identifier',{rules: [{ required: true, max: 20, message: '请输入身份证号',whitespace:true },],initialValue:(preLogin!='undefine'&&preLogin!='undefined')?preLogin:''})}
            clear
            placeholder="请输入身份证号"
            autoFocus
@@ -60,7 +65,7 @@ class LoginPage extends Component {
        <Flex justify="center" style={{paddingTop:'1rem'}}>
          <Button style={{width:'88%',borderRadius:'0.5rem'}} type="primary" disabled={!getFieldValue("identifier")} ref="login">登 录</Button>
        </Flex>
-       <Flex style={{height:'1rem',width:'100%',marginTop:this.props.containerHeight-472<0?45:this.props.containerHeight-472}}>
+       <Flex style={{height:'1rem',width:'100%',marginTop:this.props.containerHeight-452<0?45:this.props.containerHeight-452}}>
          <p style={{textAlign:'center',color:'#999999',width:'100%'}}>技术支持：北京云翼互联科技有限公司</p>
        </Flex>
     </div>

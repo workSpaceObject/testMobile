@@ -6,6 +6,8 @@ import * as FileSaver from 'file-saver';
 export default {
   namespace: 'tcTestState',
   state: {
+    //上一个登录信息
+    preLogin:'',
     curUser:{},
     testInfos:{},
     examinees:[],
@@ -41,11 +43,11 @@ export default {
 
   effects: {
     *login({payload},{call,put}){
+      yield call(setLocalData,'preLogin',String(payload.identifier));
       const {data} = yield call(login, payload);
       if (data) {
         const {unitId,examineeUid}=data.data;
         yield call(setLocalData,'unitId',String(unitId))
-
         if(examineeUid){
           yield call(setLocalData,'examineeUid',String(examineeUid))
         }else {
@@ -57,6 +59,11 @@ export default {
     },
     *getUnitSetting({payload},{call,put}){
       const {data}=yield call(getUnitSetting)
+      const preLogin=yield call(getLocalData,'preLogin');
+      console.log(preLogin);
+      if(preLogin){
+        yield put({type:'updateState',payload:{preLogin}})
+      }
     },
     *getTestInfo({payload},{call,put,select}){
       const unitId=yield call(getLocalData,'unitId');

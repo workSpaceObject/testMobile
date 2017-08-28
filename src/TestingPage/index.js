@@ -17,6 +17,8 @@ class TestingPage extends Component {
   componentDidMount(){
     //考试倒计时
     this.interval=setInterval(this.time,1000);
+
+    window.addEventListener('onblur',(e)=>this.winonBulr(e))
   }
   componentDidUpdate(){
     const {countDown,}=this.props.tcTestState;
@@ -32,10 +34,29 @@ class TestingPage extends Component {
   componentWillUnmount(){
     clearInterval(this.interval);
     this.props.dispatch({type:'tcTestState/updateState',payload:{countDown:9999}})
+    window.removeEventListener('onblur',this.winonBulr);
   }
   time=()=>{
     const {countDown}=this.props.tcTestState;
     this.props.dispatch({type:'tcTestState/countDown',payload:countDown-1})
+  }
+  winonBulr=(e)=>{
+    e = e || window.event;
+    if (window.ActiveXObject && /MSIE/.test(navigator.userAgent)) {  //IE
+      //如果 blur 事件是窗口内部的点击所产生，返回 false, 也就是说这是一个假的 blur
+      var x = e.clientX;
+      var y = e.clientY;
+      var w = document.body.clientWidth;
+      var h = document.body.clientHeight;
+
+      if (x >= 0 && x <= w && y >= 0 && y <= h) {
+        window.focus();
+        return false;
+      }
+    }else {
+      screenfull.exit();
+      this.props.dispatch({type:'tcTestState/increLeaveCnt',payload:{type:'/leaveWait'}})
+    }
   }
   onUpdateState = (params)=> {
     this.props.dispatch({type: 'tcTestState/updateState', payload: params});
@@ -185,7 +206,7 @@ class TestingPage extends Component {
         selIndex++;
         return (
           <div onClick={()=>this.onSaveAns({itemIndex:itemsIndex,studentAns:sel.selCode})} size="large" style={{display: 'block',fontSize:14,fontFamily:'宋体',padding:'20px 20px 20px 30px',position:'relative',borderBottom:'1px solid #CCCCCC'}}>
-            <span className={sel.selCode==defaultValue?styles.selDefSpan:styles.selSpan}>{selCode[selIndex]}</span>：
+            <span className={sel.selCode==defaultValue?styles.selDefSpan:styles.selSpan}>{selCode[selIndex]}</span>、
             {getPropertyValue(sel,'selText.isRichText')?<div dangerouslySetInnerHTML={{__html:getPropertyValue(sel,'selText.content')}}></div>:getPropertyValue(sel,'selText.content')}
           </div>
         )
@@ -268,13 +289,13 @@ class TestingPage extends Component {
               tintColor="#33A3F4"
               barTintColor="white"
             >
-              <TabBar.Item
+              {!answSheetVisible?<TabBar.Item
                 title="上一题"
                 key="上一题"
                 icon={<img style={{width:'0.5rem',height:'0.5rem'}} src={require('../assets/testup.png')}/>}
                 onPress={(itemsIndex<0||itemsIndex==0)?null:()=>this.setitemsIndex(parseInt(itemsIndex)-1)}
               >
-              </TabBar.Item>
+              </TabBar.Item>:null}
               <TabBar.Item
                 icon={<img style={{width:'0.5rem',height:'0.5rem'}} src={require('../assets/testnav.png')}/>}
                 selectedIcon={<img style={{width:'0.5rem',height:'0.5rem'}} src={require('../assets/testnavb.png')}/>}
@@ -283,13 +304,13 @@ class TestingPage extends Component {
                 onPress={() => this.onUpdateState({answSheetVisible:!answSheetVisible})}
               >
               </TabBar.Item>
-              <TabBar.Item
+              {!answSheetVisible?<TabBar.Item
                 icon={<img style={{width:'0.5rem',height:'0.5rem'}} src={require('../assets/testdown.png')}/>}
                 title="下一题"
                 key="下一题"
                 onPress={itemsIndex<[...(testItems||[])].length-1?()=>this.setitemsIndex(parseInt(itemsIndex)+1):null}
               >
-              </TabBar.Item>
+              </TabBar.Item>:null}
             </TabBar>
           </div>}
       </div>
