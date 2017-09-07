@@ -25,48 +25,48 @@ export async function clearLocalData() {
 
 
 export async function getUnitSetting(){
-  return get(`${urlpre}/tc/getUnitSetting`);
+  return get(`${urlpre}/ts/getUnitSetting`);
 }
 //query params:identifier
 export async function login(params){
-  return post(`${urlpre}/tc/login`,params,false);
+  return post(`${urlpre}/ts/login`,params,false);
 }
-export async function getTestInfo(unitId,params){
-  return post(`${urlpre}/tc/getTestInfo/${unitId}`,params,false);
+export async function getTestInfo(params){
+  return post(`${urlpre}/ts/getTestInfo`,params,false);
 }
 export async function enterTest(examineeUid) {
-  return get(`${urlpre}/tc/enterTest/${examineeUid}`)
+  return get(`${urlpre}/ts/enterTest/${examineeUid}`)
 }
 export async function getLeaveSeconds(examineeUid){
-  return get(`${urlpre}/tc/getLeaveSeconds/${examineeUid}`);
+  return get(`${urlpre}/ts/getLeaveSeconds/${examineeUid}`);
 }
 export async function increLeaveCnt(examineeUid){
-  return get(`${urlpre}/tc/increLeaveCnt/${examineeUid}`,null,false)
+  return get(`${urlpre}/ts/increLeaveCnt/${examineeUid}`,null,false)
 }
 //query params:studentAns
 export async function saveStudentAns(examineeUid,itemIndex,params){
-  return post(`${urlpre}/tc/saveStudentAns/${examineeUid}/${itemIndex}`,params,false,false);
+  return post(`${urlpre}/ts/saveStudentAns/${examineeUid}/${itemIndex}`,params,false,false);
 }
 export async function saveStudentAnses(examineeUid,params) {
-  return post(`${urlpre}/tc/saveStudentAnses/${examineeUid}`,params,true,false);
+  return post(`${urlpre}/ts/saveStudentAnses/${examineeUid}`,params,true,false);
 }
 export async function updateOfflineAnses(examineeUid,params) {
-  return post(`${urlpre}/tc/updateOfflineAnses/${examineeUid}`,params,true,false);
+  return post(`${urlpre}/ts/updateOfflineAnses/${examineeUid}`,params,true,false);
 }
 //query params:studentAns
 export async function saveStudentAnsDoubt(examineeUid,itemIndex,isDoubt){
-  return post(`${urlpre}/tc/saveStudentAnsDoubt/${examineeUid}/${itemIndex}/${isDoubt}`,null,false,false);
+  return post(`${urlpre}/ts/saveStudentAnsDoubt/${examineeUid}/${itemIndex}/${isDoubt}`,null,false,false);
 }
 export async function saveStudentAnsDoubts(examineeUid,doubts){
-  return post(`${urlpre}/tc/saveStudentAnsDoubts/${examineeUid}`,doubts,false,false);
+  return post(`${urlpre}/ts/saveStudentAnsDoubts/${examineeUid}`,doubts,false,false);
 }
 //query params:studentAns
 export async function deployPaper(examineeUid){
-  return post(`${urlpre}/tc/deployPaper/${examineeUid}`,null,false,false);
+  return post(`${urlpre}/ts/deployPaper/${examineeUid}`,null,false,false);
 }
 export async function sendHelpEvent(helpEvent){
-  return post(`${urlpre}/tc/sendHelpEvent`,helpEvent);
+  return post(`${urlpre}/ts/sendHelpEvent`,helpEvent);
 }
 export async function getReplyedHelpEvent(helpEventUid){
-  return get(`${urlpre}/tc/getReplyedHelpEvent/${helpEventUid}`);
+  return get(`${urlpre}/ts/getReplyedHelpEvent/${helpEventUid}`);
 }

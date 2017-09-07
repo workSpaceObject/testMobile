@@ -6,6 +6,7 @@ import {timeForamt,getPropertyValue} from '../common/ObjUtils';
 import {urlpre} from '../utils/Constants';
 import screenfull from 'screenfull';
 import HandModal from './handmodal';
+import Dimensions from 'react-dimensions'
 
 const CheckboxItem=Checkbox.CheckboxItem;
 const alert=Modal.alert;
@@ -91,7 +92,7 @@ class TestingPage extends Component {
 
   render(){
     const {form,dispatch}=this.props;
-    const {handVisible,leaveVisible,ansResults,ansDoubts,examinee,oldCountDown,test,testItems,countDown,leaveCnt,paperSects,againVisible,unit,answSheetVisible,itemsIndex}=this.props.tcTestState;
+    const {handVisible,leaveVisible,ansResults,ansDoubts,examinee,oldCountDown,test,testItems,countDown,leaveCnt,paperSects,againVisible,answSheetVisible,itemsIndex}=this.props.tcTestState;
 
     //每3分钟上传一次  未上传成功的答案
     if((oldCountDown-countDown)&&((oldCountDown-countDown)%180)==0){
@@ -99,31 +100,9 @@ class TestingPage extends Component {
       this.onSaveStudentAnsDoubts();
     }
 
-
-    // window.onblur = function (e) {
-    //   e = e || window.event;
-    //   if (window.ActiveXObject && /MSIE/.test(navigator.userAgent)) {  //IE
-    //     //如果 blur 事件是窗口内部的点击所产生，返回 false, 也就是说这是一个假的 blur
-    //     var x = e.clientX;
-    //     var y = e.clientY;
-    //     var w = document.body.clientWidth;
-    //     var h = document.body.clientHeight;
-    //
-    //     if (x >= 0 && x <= w && y >= 0 && y <= h) {
-    //       window.focus();
-    //       return false;
-    //     }
-    //   }else {
-    //     screenfull.exit();
-    //     dispatch({type:'tcTestState/increLeaveCnt',payload:{type:'/leaveWait'}})
-    //   }
-    // }
-    // document.addEventListener('keydown',function () {
-    //   var e = event || window.event || arguments.callee.caller.arguments[0];
-    //   if(e && e.keyCode==27){
-    //     dispatch({type:'tcTestState/increLeaveCnt',payload:{type:'/leaveWait'}})
-    //   }
-    // })
+    if(!screenfull.isFullscreen) {
+      dispatch({type:'tcTestState/increLeaveCnt',payload:{type:'/leaveWait'}})
+    }
 
   //试题导航
     const anchor=new Array();
@@ -148,6 +127,8 @@ class TestingPage extends Component {
 
     let sectIndex=-1;
     let lastSectCnt=0;
+    //题型信息
+
     const testNum=paperSects&&paperSects.map(sect=>{
         sectIndex++;
         sectIndex?lastSectCnt+=paperSects[sectIndex-1].itemCnt:lastSectCnt=0;
@@ -162,6 +143,16 @@ class TestingPage extends Component {
         </div>
         )
       })
+
+    let secTitle='';
+    for(let paperSecIndex=0;paperSecIndex<[...(paperSects||[])].length;paperSecIndex++){
+      paperSecIndex?lastSectCnt+=paperSects[paperSecIndex-1].itemCnt:lastSectCnt=0;
+      if(itemsIndex<lastSectCnt+paperSects[paperSecIndex].itemCnt||itemsIndex==lastSectCnt+paperSects[paperSecIndex].itemCnt){
+        secTitle=paperSects[paperSecIndex].title;
+        break;
+      }
+    }
+
 
     let type, itemSel,defaultValue,isDoubt;
     //已答题答案;
@@ -219,7 +210,7 @@ class TestingPage extends Component {
         selIndex++;
         return (
           <div onClick={()=>checkBoxSave(sel.selCode)} size="large" style={{display: 'block',fontSize:14,fontFamily:'宋体',padding:'20px 20px 20px 30px',position:'relative',borderBottom:'1px solid #CCCCCC'}}>
-            <span style={{borderRadius:0}} className={String(defaultValue).indexOf(sel.selCode)<0?styles.selSpan:styles.selDefSpan}>{selCode[selIndex]}</span>：
+            <span style={{borderRadius:0}} className={String(defaultValue).indexOf(sel.selCode)<0?styles.selSpan:styles.selDefSpan}>{selCode[selIndex]}</span>、
             {getPropertyValue(sel,'selText.isRichText')?<div dangerouslySetInnerHTML={{__html:getPropertyValue(sel,'selText.content')}}></div>:getPropertyValue(sel,'selText.content')}
           </div>
         )
@@ -230,10 +221,10 @@ class TestingPage extends Component {
       itemSel=(
         <div style={{display: 'block',fontSize:14,fontFamily:'宋体',margin:10}} onChange={(data)=>this.onSaveAns({itemIndex:itemsIndex,studentAns:data.target.value})} defaultValue={defaultValue}>
           <div onClick={()=>this.onSaveAns({itemIndex:itemsIndex,studentAns:'A'})} size="large" style={{display: 'block',fontSize:14,fontFamily:'宋体',padding:'20px 20px 20px 30px',position:'relative',borderBottom:'1px solid #CCCCCC'}}>
-            <span className={'A'==defaultValue?styles.selDefSpan:styles.selSpan}> </span>：正确
+            <span className={'A'==defaultValue?styles.selDefSpan:styles.selSpan}> </span>、正确
           </div>
           <div onClick={()=>this.onSaveAns({itemIndex:itemsIndex,studentAns:'B'})} size="large" style={{display: 'block',fontSize:14,fontFamily:'宋体',padding:'20px 20px 20px 30px',position:'relative',borderBottom:'1px solid #CCCCCC'}}>
-            <span className={'B'==defaultValue?styles.selDefSpan:styles.selSpan}> </span>：错误
+            <span className={'B'==defaultValue?styles.selDefSpan:styles.selSpan}> </span>、错误
           </div>
         </div>
       )
@@ -247,14 +238,14 @@ class TestingPage extends Component {
       e.preventDefault(); // 修复 Android 上点击穿透
       Popup.show(<div>
         <div style={{padding:20,lineHeight:'45px'}}>
-          <img src={`${urlpre}/tc/getExamineeImg/${examinee.uid}/${examinee.imgVer}`}  alt=""  style={{width:'90px',height:'90px',borderRadius:'45px',float:'left'}}/>
+          <img src={`${urlpre}/ts/getExamineeImg/${examinee.uid}/${examinee.imgVer}`}  alt=""  style={{width:'90px',height:'90px',borderRadius:'45px',float:'left'}}/>
           <div style={{marginLeft:'10px',float:'left'}}>
             <p style={{color:'#333333',fontSize:'16px'}}>{examinee.name}</p>
             {/*<p style={{color:'#666666',paddingTop:'10px'}}>{unit.title}</p>总分<span style={{color:'#FA9627',fontSize:'20px'}}>100</span>*/}
           </div>
           <div style={{clear:'both'}}></div>
         </div>
-        <div style={{height:'45px',lineHeight:'40px',backgroundColor:'#E4F0FE',textAlign:'center',color:'#7F8284'}}>{unit.title}</div>
+        {/*<div style={{height:'45px',lineHeight:'40px',backgroundColor:'#E4F0FE',textAlign:'center',color:'#7F8284'}}>{unit.title}</div>*/}
       </div>);
     };
 
@@ -265,8 +256,10 @@ class TestingPage extends Component {
             :<div style={{height:'100%',backgroundColor:'#EEEEEE'}}>
             <a onClick={()=>this.onUpdateState({handVisible:true})} style={{position:'absolute',right:15,top:15,color:'#fff'}}>交卷</a>
             <a onClick={onPopuClick} style={{position:'absolute',right:58,top:13,color:'#fff'}}><span style={{fontSize:20}} className="iconfont">&#xe636;</span></a>
-            <div style={{height:'1rem',borderBottom:'1px solid #ccc',lineHeight:'1rem'}}>
-              <span style={{float:'left',marginLeft:10}}>本次总{[...(testItems||[])].length}题</span><span style={{float:'right',color:'#ef6000',fontSize:'0.4rem',marginRight:10}}>{timeForamt(countDown)}</span>
+            <div style={{borderBottom:'1px solid #ccc',lineHeight:'0.7rem'}}>
+              <span style={{width:this.props.containerWidth-140,float:'left',marginLeft:10}}>{secTitle}</span>
+              <span style={{width:'100px',float:'right',color:'#ef6000',fontSize:'0.4rem',marginRight:10}}>{timeForamt(countDown)}</span>
+              <div style={{clear:'both'}}></div>
             </div>
             {/*试题*/}
             {!answSheetVisible?<div style={{marginBottom:'50px',marginTop:10,padding:'15px 0'}}>
@@ -285,17 +278,18 @@ class TestingPage extends Component {
             {/*底部按钮*/}
 
             <TabBar
+              hidden={answSheetVisible}
               unselectedTintColor="#949494"
               tintColor="#33A3F4"
               barTintColor="white"
             >
-              {!answSheetVisible?<TabBar.Item
+              <TabBar.Item
                 title="上一题"
                 key="上一题"
                 icon={<img style={{width:'0.5rem',height:'0.5rem'}} src={require('../assets/testup.png')}/>}
                 onPress={(itemsIndex<0||itemsIndex==0)?null:()=>this.setitemsIndex(parseInt(itemsIndex)-1)}
               >
-              </TabBar.Item>:null}
+              </TabBar.Item>
               <TabBar.Item
                 icon={<img style={{width:'0.5rem',height:'0.5rem'}} src={require('../assets/testnav.png')}/>}
                 selectedIcon={<img style={{width:'0.5rem',height:'0.5rem'}} src={require('../assets/testnavb.png')}/>}
@@ -304,13 +298,13 @@ class TestingPage extends Component {
                 onPress={() => this.onUpdateState({answSheetVisible:!answSheetVisible})}
               >
               </TabBar.Item>
-              {!answSheetVisible?<TabBar.Item
+              <TabBar.Item
                 icon={<img style={{width:'0.5rem',height:'0.5rem'}} src={require('../assets/testdown.png')}/>}
                 title="下一题"
                 key="下一题"
                 onPress={itemsIndex<[...(testItems||[])].length-1?()=>this.setitemsIndex(parseInt(itemsIndex)+1):null}
               >
-              </TabBar.Item>:null}
+              </TabBar.Item>
             </TabBar>
           </div>}
       </div>
@@ -318,6 +312,6 @@ class TestingPage extends Component {
   }
 
 }
-export default connect(({tcTestState,})=>({tcTestState,})) (TestingPage);
+export default connect(({tcTestState,})=>({tcTestState,})) (Dimensions()(TestingPage));
 
 

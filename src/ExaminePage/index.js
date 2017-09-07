@@ -3,8 +3,8 @@ import { Flex,Button,List} from 'antd-mobile';
 import {connect} from 'dva';
 import {urlpre} from '../utils/Constants';
 import {Link} from 'dva/router';
-import {getPropertyValue,timeForamt} from '../common/ObjUtils';
 import Styles from './index.less';
+import Dimensions from 'react-dimensions'
 
 class ExaminePage extends Component {
   componentWillMount() {
@@ -24,13 +24,13 @@ render() {
     return (
       <div className={Styles.container}>
         <div className={Styles.bannerv}>
-          <img src={require('../assets/head.png')} />
-          <span>{examinee.name}</span>
+          <img src={`${urlpre}/ts/getExamineeImg/${examinee.uid}/${examinee.imgVer}`} />
+          <span style={{marginLeft:'75px'}}>{examinee.name}</span>
         </div>
         <div className={Styles.testtit}>
-          <div className={Styles.title}>
-            <img src={require("../assets/testtit.png")} />
-            <span>{test.title}</span>
+          <div className={Styles.title} style={{lineHeight:'1rem',}}>
+            <i className="iconfont" style={{color:'#fff',fontSize:'0.88rem',marginLeft:9}}>&#xe601;</i>
+            <span style={{marginLeft:'1.2rem'}}>{test.title}</span>
           </div>
           <div className={Styles.testtype}>
             <span>{test.isImediateTest?'即到即考':'集体考试'}</span>
@@ -39,7 +39,7 @@ render() {
 
         <div className={Styles.nameid} >
           <div className={Styles.title}>
-            <img src="../../images/peoid.png" />
+            <i className="iconfont" style={{color:'#3593db',fontSize:'0.7rem',marginLeft:9}}>&#xe689;</i>
             <span style={{color:'#333'}}>考生标识</span>
           </div>
           <div className={Styles.peoinfo}>
@@ -49,7 +49,7 @@ render() {
 
         <div className={Styles.nameid} style={{margin:0,borderBottom:0}}>
           <div className={Styles.title}>
-            <img src={require("../assets/starttime.png")} />
+            <i className="iconfont" style={{color:'#8FD085'}}>&#xe65e;</i>
             <span style={{color:'#333'}}>开始时间</span>
           </div>
           <div className={Styles.peoinfo}>
@@ -59,7 +59,7 @@ render() {
 
         <div className={Styles.nameid} style={{margin:0,borderBottom:0}}>
           <div className={Styles.title}>
-            <img src={require("../assets/endtime.png")} />
+            <i className="iconfont" style={{color:'#F7B186'}}>&#xe65d;</i>
             <span style={{color:'#333'}}>结束时间</span>
           </div>
           <div className={Styles.peoinfo}>
@@ -68,8 +68,8 @@ render() {
         </div>
 
         <div className={Styles.nameid} style={{margin:0}}>
-          <div className="title">
-            <img src={require("../assets/testtimes.png")} />
+          <div className={Styles.title}>
+            <i className="iconfont" style={{color:'#62D3E3'}}>&#xe615;</i>
             <span style={{color:'#333'}}>考试时长</span>
           </div>
           <div className={Styles.peoinfo}>
@@ -77,8 +77,8 @@ render() {
           </div>
         </div>
 
-        <Flex style={{backgroundColor:'#EBEBEB',paddingBottom:'0.2rem'}}>
-          <Flex.Item align="center">
+        <Flex style={{width:'100%',marginTop:this.props.containerHeight-609<0?0:this.props.containerHeight-609,paddingBottom:'0.2rem'}} >
+          <Flex.Item align="center" >
             <Link style={{marginTop:15,width: 165,backgroundColor:'#3593DB',padding:'0.2rem'}} className="aBtn" to="/testWait" size="large">信息无误，进入考试</Link>
             <Link style={{marginTop:15,width: 165,padding:'0.2rem'}} className="aBtnDenger" to="/" size="large">信息有误，返回登录</Link>
           </Flex.Item>
@@ -89,6 +89,6 @@ render() {
     );
   }
 }
-export default connect(({tcTestState,loading}) => ({tcTestState,loading:loading.global}))(ExaminePage);
+export default connect(({tcTestState,loading}) => ({tcTestState,loading:loading.global}))(Dimensions()(ExaminePage));
 
 

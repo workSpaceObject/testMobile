@@ -11,7 +11,7 @@ class LeaveWaitPage extends Component {
     this.props.dispatch({type:'tcTestState/getTestPapers'})
   }
   componentDidMount(){
-    //this.interval=setInterval(this.time,1000);
+    this.interval=setInterval(this.time,1000);
   }
   componentDidUpdate(){
     const {leaveWaitSecond,}=this.props.tcTestState;
@@ -33,13 +33,15 @@ class LeaveWaitPage extends Component {
   onUpdateState=(params)=>{
     this.props.dispatch({type:'tcTestState/updateState',payload:params})
   }
+  contion=()=> {
+    screenfull.request();
+    clearInterval(this.interval);
+    this.props.dispatch({type: 'tcTestState/increLeaveCnt', payload: {type:'/testing'}});
+  }
   render() {
     const {dispatch}=this.props;
     //继续考试
-    function contion() {
-      screenfull.request();
-      dispatch({type: 'tcTestState/increLeaveCnt', payload: {type:'/testing'}});
-    }
+
     const {leaveVisible,leaveWaitSecond,oldMaxLeaveCnt,leaveCnt}=this.props.tcTestState;
     return (
       <div className={Styles.page} style={{height:'100%',padding:0,position:'relative',overflow:'hidden'}}>
@@ -53,7 +55,7 @@ class LeaveWaitPage extends Component {
           <img src={require('../assets/leaveMess.png')} alt="" style={{width:'100%'}}/>
           <p style={{position:'absolute',top: '35%',left: '29%',fontSize: 22}}>您已经离开考试<i style={{color:'#F39800',fontSize:37,fontWeight:'bold',}}> {leaveCnt||0} </i>次</p>
         </div>}
-        <Button size='large' style={{width:178,margin:'34% auto 0 auto'}} type="primary" onClick={contion}>知道了，继续答题</Button>
+        <Button size='large' style={{width:178,margin:'15% auto 0 auto'}} type="primary" onClick={this.contion}>知道了，继续答题</Button>
         {leaveVisible?<p  style={{marginTop:15,textAlign:'center',width:'100%',color:'red'}}>离开考试次{oldMaxLeaveCnt}，将被判定为作弊，并强制收卷</p>:''}
       </div>
     );
